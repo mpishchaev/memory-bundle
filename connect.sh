@@ -403,6 +403,46 @@ EOF
 chmod +x "$CLI_FILE"
 echo "✅ CLI-файл 'brain' успешно создан в корне проекта: ./brain"
 
+# 6. Configure Obsidian Ignores in Project Root
+# If the user opens the project root as an Obsidian Vault, we must ensure graphify-out/
+# and other build artifacts are ignored so they don't pollute the graph view.
+echo "⚙️  Настройка игнорирования в Obsidian для корня проекта..."
+mkdir -p "$PROJECT_ROOT/.obsidian"
+TEMPLATE_APP_JSON="$BUNDLE_DIR/template/.obsidian/app.json"
+PROJECT_APP_JSON="$PROJECT_ROOT/.obsidian/app.json"
+
+python3 -c '
+import json, os, sys
+project_json = sys.argv[1]
+template_json = sys.argv[2]
+try:
+    with open(template_json, "r") as f:
+        t_data = json.load(f)
+    t_ignores = t_data.get("userIgnoreFilters", [])
+except Exception:
+    t_ignores = ["graphify-out/", ".agents/", ".claude/", "node_modules/", ".venv/"]
+
+p_data = {}
+if os.path.exists(project_json):
+    try:
+        with open(project_json, "r") as f:
+            p_data = json.load(f)
+    except Exception:
+        pass
+
+p_ignores = p_data.get("userIgnoreFilters", [])
+merged = list(p_ignores)
+for ig in t_ignores:
+    if ig not in merged:
+        merged.append(ig)
+
+p_data["userIgnoreFilters"] = merged
+with open(project_json, "w") as f:
+    json.dump(p_data, f, indent=2)
+' "$PROJECT_APP_JSON" "$TEMPLATE_APP_JSON"
+
+echo "✅ Игнорируемые файлы/папки в Obsidian обновлены."
+
 echo ""
 echo "================================================================="
 echo "🎉 Готово! Агентская память подключена и готова к работе."
