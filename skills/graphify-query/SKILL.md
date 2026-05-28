@@ -1,60 +1,60 @@
 ---
 name: graphify-query
-description: "Использует утилиту graphify для семантического поиска, поиска путей зависимостей и объяснения структуры кода через граф знаний проекта"
+description: "Uses the graphify utility for semantic search, dependency path discovery, and codebase structure explanation via the project knowledge graph"
 ---
 
-# graphify-query (Запросы к Графу Знаний / Codebase Mapping)
+# graphify-query (Knowledge Graph Queries / Codebase Mapping)
 
-## 🎯 Назначение
+## 🎯 Purpose
 
-Этот навык обучает агента использованию утилиты `graphify` для **навигации по кодовой базе и семантическому графу проекта**. Вместо дорогостоящих сканирований файлов или неточных `grep`-поисков по коду, агент запрашивает локальный граф знаний для поиска взаимосвязей, зависимостей и документации модулей.
+This skill instructs the agent on how to use the `graphify` utility for **codebase navigation and semantic query routing**. Instead of costly file scanning or imprecise `grep` searches across code files, the agent queries the local knowledge graph to find relationships, dependencies, and module documentation.
 
-## 🚦 Когда использовать
+## 🚦 When to Use
 
-- При разборе незнакомой кодовой базы или изучении нового модуля.
-- Для ответа на вопросы вида "Как компонент X связан с компонентом Y?".
-- Чтобы понять архитектуру проекта, найти "god-классы" и изолированные модули.
-- После изменения структуры кода или добавления нового файла для обновления графа.
+- When exploring an unfamiliar codebase or studying a new module.
+- To answer questions like "How is component X related to component Y?".
+- To understand Software Architecture, locate "god classes", and identify isolated modules.
+- After modifying code structure or adding a new file to refresh the graph.
 
-## 📋 Инструкции по выполнению
+## 📋 Instructions for Execution
 
-Локальный граф знаний хранится в каталоге `graphify-out/`. Агент может вызывать CLI-команды `graphify`:
+The local knowledge graph is stored in the `graphify-out/` directory. The agent can invoke the `graphify` CLI commands:
 
-### 1. Чтение отчета о графе (Рекомендуется в начале работы)
-Перед чтением исходных файлов всегда ознакомьтесь с отчетом:
+### 1. Read the Graph Report (Recommended at startup)
+Always read the summary report before diving into individual source files:
 ```bash
 cat graphify-out/GRAPH_REPORT.md
 ```
 
-### 2. Семантический запрос к графу (Поиск ответов)
-Поиск ответов на вопросы о связях кода с помощью обхода графа в ширину (BFS):
+### 2. Semantic Graph Query (Question Answering)
+Find answers to questions about code connections using Breadth-First Search (BFS) graph traversal:
 ```bash
-graphify query "Как устроена инициализация сессии пользователя?"
+graphify query "How is user session initialization structured?"
 ```
 
-### 3. Поиск пути связей между компонентами
-Поиск кратчайшего пути зависимостей или вызовов между двумя символами кода/файлами:
+### 3. Find Dependency/Connection Path
+Find the shortest path of dependencies or call flows between two code symbols/files:
 ```bash
 graphify path "AuthService" "DatabasePool"
 ```
 
-### 4. Объяснение сущности
-Получение подробного описания конкретной сущности (класса, функции, модуля) из графа:
+### 4. Explain an Entity
+Get a detailed explanation of a specific entity (class, function, module) and its edges from the graph:
 ```bash
 graphify explain "UserSession"
 ```
 
-### 5. Обновление графа (Важно после правок кода)
-Если вы изменили код или добавили новые файлы, обязательно обновите граф (анализирует AST, не тратит токены LLM):
+### 5. Update the Graph (Crucial after code changes)
+If you edited code or added new files, rebuild the graph (analyses AST, no LLM api calls cost):
 ```bash
-# Обновление графа в текущей директории:
+# Update the graph in the current directory:
 graphify update .
 
-# Или через CLI-утилиту brain:
+# Or via the brain CLI utility:
 ./brain graphify
 ```
 
-## ⚠️ Правила работы
-- **Приоритет графа:** Всегда предпочитайте запросы `graphify query` или `graphify path` долгому сканированию файлов grep-ом.
-- **Идемпотентность:** Обновляйте граф после каждых структурных изменений кода с помощью `graphify update .`.
-- **Игнорирование:** Убедитесь, что временные файлы графа `graphify-out/` внесены в `.gitignore` и `.graphifyignore`.
+## ⚠️ Safety Rules
+- **Graph First:** Always prefer queries like `graphify query` or `graphify path` over slow full-text grep scans.
+- **Idempotency:** Re-run `graphify update .` after structural codebase modifications to keep the graph in sync.
+- **Ignored Files:** Make sure temporary graph artifacts (`graphify-out/`) are excluded via `.gitignore` and `.graphifyignore`.

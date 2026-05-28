@@ -1,43 +1,43 @@
 ---
 name: vault-maintenance
-description: "Выполняет проверку здоровья семантического графа: поиск битых ссылок, страниц-сирот (orphans) и валидацию YAML-метаданных"
+description: "Performs vault health checks: searches for broken links, orphan pages, and validates YAML metadata"
 ---
 
-# vault-maintenance (Обслуживание Хранилища / Проверка Здоровья)
+# vault-maintenance (Vault Maintenance / Health Check)
 
-## 🛠️ Назначение
+## 🛠️ Purpose
 
-Этот навык предназначен для **поддержания порядка и связности в базе знаний** (Graph Integrity). Со временем в графе могут появляться битые ссылки (ссылки на несуществующие файлы), страницы без входящих и исходящих связей (сироты), а также заметки с поврежденным или отсутствующим YAML Frontmatter. Навык `vault-maintenance` сканирует слои `01_Wiki/` и `02_Memory/` для выявления и устранения этих аномалий.
+This skill is designed to **maintain order and connectivity in the knowledge base** (Graph Integrity). Over time, the knowledge graph can develop broken links (pointing to non-existent files), orphan pages (with no incoming or outgoing links), and notes with malformed or missing YAML Frontmatter. The `vault-maintenance` skill scans the `01_Wiki/` and `02_Memory/` layers to detect and resolve these anomalies.
 
-## 🚦 Когда использовать
+## 🚦 When to Use
 
-- В рамках регулярной гигиены базы знаний (например, в конце недели).
-- После массового импорта или ручного переименования/перемещения файлов.
-- При подозрении на потерю связей между смежными темами.
+- As part of regular vault hygiene (e.g., at the end of the week).
+- After bulk importing or manual renaming/moving of files.
+- When you suspect degradation of context (losing links between related topics).
 
-## 📋 Инструкции по выполнению
+## 📋 Instructions for Execution
 
-Запустите проверку здоровья памяти с помощью следующей команды:
+Run the memory health check using the following command:
 
 ```bash
-# Вызов через CLI-утилиту brain (рекомендуется):
+# Invoke via the brain CLI utility (recommended):
 ./brain check --report
 
-# Или напрямую через python:
+# Or directly via Python:
 python3 .brain/05_Scripts/maintenance/check.py --report
 ```
 
-### Дополнительные утилиты обслуживания:
-Скрипт также поддерживает поиск и слияние дубликатов концептов.
+### Additional Maintenance Tools:
+The script also supports scanning for and merging duplicate concepts.
 
-1. **Поиск дубликатов:**
+1. **Find duplicates:**
    ```bash
-   # Поиск концептов с похожими названиями или алиасами (порог похожести 85% по умолчанию):
+   # Find concepts with similar names or aliases (default similarity threshold is 85):
    python3 .brain/05_Scripts/maintenance/find_duplicates.py --min 80
    ```
 
-2. **Слияние дубликатов:**
+2. **Merge duplicates:**
    ```bash
-   # Объединение концепта-дубликата с основным (переносит алиасы, теги, контент и обновляет ссылки во всем vault):
+   # Merges a duplicate concept into the winner (transfers aliases, tags, content, and updates all backlinks in the vault):
    python3 .brain/05_Scripts/maintenance/merge_duplicates.py --winner .brain/01_Wiki/concepts/Main_Concept.md --loser .brain/01_Wiki/concepts/Duplicate_Concept.md
    ```

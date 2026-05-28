@@ -1,84 +1,84 @@
-# Agent Memory Bundle 🧠 (Агентская Память)
+# Agent Memory Bundle 🧠
 
-Универсальный, переносимый и самостоятельный бандл долговременной семантической и эпизодической памяти для ИИ-агентов (Claude Code, Antigravity, Codex, Hermes, OpenClaw и др.).
+A universal, self-contained, and portable long-term semantic and episodic memory bundle for AI agents (Claude Code, Antigravity, Codex, Hermes, OpenClaw, and others).
 
-Интегрирует в единую систему:
-1. **Структуру папок Obsidian** на базе методологии PARA + Raw-to-Wiki.
-2. **Агентские навыки** (Agent Skills) для работы с разметкой Obsidian, канвасом и базами.
-3. **Граф знаний проекта** через утилиту `graphify` для семантической навигации по коду.
-4. **Когнитивные скрипты автоматизации** (Sleep Cycle, Maintenance, Index Updating).
+It integrates the following into a single system:
+1. **Obsidian Vault Folder Structure** based on the PARA + Raw-to-Wiki methodology.
+2. **Agent Skills** to let the AI agent work with Obsidian Flavored Markdown, json-canvas, and bases.
+3. **Project Knowledge Graph** via the `graphify` utility for semantic codebase navigation and mapping.
+4. **Cognitive Automation Scripts** (Sleep Cycle, Maintenance, and index updates).
 
 ---
 
-## ⚡ Быстрый старт (Quick Start)
+## ⚡ Quick Start
 
-Чтобы подключить агентскую память к новому или существующему проекту:
+To connect agent memory to a new or existing project:
 
-1. Перейдите в корень вашего проекта:
+1. Navigate to your project root:
    ```bash
    cd /path/to/your/project
    ```
 
-2. Запустите скрипт подключения из бандла:
+2. Run the connection script from this bundle:
    ```bash
    /home/ffazy/Projects/memory-bundle/connect.sh
    ```
 
-3. (Опционально) Настройте файл `.brain/05_Scripts/sleep_cycle/.env`, указав API-ключ для LLM (нужен для работы Sleep Cycle — разбора сырых заметок).
+3. (Optional) Configure the `.brain/05_Scripts/sleep_cycle/.env` file with your LLM API credentials (required for the Sleep Cycle note parser).
 
 ---
 
-## 📁 Архитектура хранилища (PARA)
+## 📁 Repository Architecture (PARA)
 
-В корне проекта создается скрытый каталог `.brain/` (имя можно настроить флагом `-d`), являющийся полноценным хранилищем Obsidian:
+In the root of the project, a hidden directory `.brain/` is created (folder name can be customized with the `-d` flag), which is a fully functional Obsidian vault:
 
-* **`00_Raw/`** — Inbox для неструктурированных заметок, дампов логов и веб-клиппингов.
-* **`01_Wiki/`** — Долгосрочная семантическая память. Содержит подпапки:
-  * `concepts/` — абстрактные идеи, теории, фреймворки.
-  * `patterns/` — прикладные рецепты, паттерны и workflow.
-  * `technology/` — конкретные библиотеки, языки, фреймворки, API.
-  * `people/` / `organizations/` — персоны и компании.
-  * `sources/` — источники информации (ссылки на видео, статьи, репозитории).
-* **`02_Memory/`** — Активные контексты, задачи и сессионные логи агентов.
-* **`03_Meta/`** — Диспетчерская: `Master_Index.md` (входная точка), `hot.md` (приоритеты), шаблоны заметок и `Log.md`.
-* **`04_Archive/`** — Исторические данные и закрытые проекты.
-* **`05_Scripts/`** — Скрипты автоматизации (Python).
-* **`06_Skills/`** — Переносимые навыки агентов (Agent Skills), прилинкованные к вашему ИИ-клиенту.
-
----
-
-## 🛠️ CLI-интерфейс управления (`brain`)
-
-После установки в корне проекта появляется исполняемый файл `./brain`:
-
-* **`./brain sleep`** — Запуск цикла сна. Разбирает новые файлы из `00_Raw/`, извлекает сущности через LLM, распределяет их по папкам в `01_Wiki/` и выполняет слияние (merge) с существующими концептами при совпадении.
-  * Флаги: `--limit N` (число обрабатываемых заметок), `--archive` (архивировать обработанное), `--graphify` (обновить граф после сна), `--dry-run`.
-* **`./brain check`** — Проверка здоровья памяти ( maintenance). Ищет битые ссылки `[[Concept]]`, страницы-сироты (orphans) и ошибки в YAML-метаданных. С флагом `--report` сохраняет отчет в `Log.md`.
-* **`./brain duplicates`** — Поиск похожих по названию или алиасам заметок во избежание дублирования (порог похожести регулируется через `--min N`).
-* **`./brain merge --winner <path> --loser <path>`** — Автоматическое слияние двух концептов с объединением алиасов, тегов, контента и перезаписью всех обратных ссылок в хранилище.
-* **`./brain index`** — Принудительное обновление индексных файлов `_index.md` во всех каталогах с пересчетом статистики.
-* **`./brain graphify`** — Быстрый запуск `graphify update` для актуализации графа знаний кода.
+* **`00_Raw/`** — Ingestion inbox for unstructured notes, chat logs, clipping, and session outputs.
+* **`01_Wiki/`** — Long-term semantic knowledge base. Contains subfolders:
+  * `concepts/` — abstract ideas, theories, and frameworks.
+  * `patterns/` — practical techniques, recipes, and workflows.
+  * `technology/` — specific tools, libraries, languages, and vendor APIs.
+  * `people/` / `organizations/` — key persons and companies/communities.
+  * `sources/` — atomic source citation pages (videos, articles, repositories, threads).
+* **`02_Memory/`** — Episodic memory, active contexts, tasks, and session logs.
+* **`03_Meta/`** — Vault control panel: `Master_Index.md` (root directory), `hot.md` (current priorities), templates, and the execution log `Log.md`.
+* **`04_Archive/`** — Historical data and completed tasks/projects.
+* **`05_Scripts/`** — Automation scripts (Python).
+* **`06_Skills/`** — Portable agent skills (Agent Skills) symlinked directly to your AI environment.
 
 ---
 
-## 🔗 Интеграция с ИИ-клиентами (Harnesses)
+## 🛠️ CLI Interface (`brain`)
 
-Скрипт `connect.sh` автоматически обнаруживает и настраивает конфигурации для следующих агентов:
+After initialization, an executable file `./brain` is created in the project root:
 
-1. **Claude Code**: Навыки прописываются в `.claude/skills/`. Также запускается интеграция `graphify` в `CLAUDE.md`.
-2. **Google Antigravity**: Навыки копируются в `.agents/skills/`.
-3. **Codex CLI**: Навыки линкуются в `~/.codex/skills/`.
-4. **Hermes / OpenCode**: Навыки импортируются в `~/.opencode/skills/memory-bundle/`.
-
-Если ни один агент не обнаружен, по умолчанию создается локальная папка `.claude/skills/` в корне проекта.
+* **`./brain sleep`** — Run the Sleep Cycle. Processes new notes in `00_Raw/`, extracts atomic concepts using LLM, files them under `01_Wiki/` subfolders, and automatically merges duplicates with existing files.
+  * Flags: `--limit N` (max raw notes to process), `--archive` (move raw notes to `04_Archive/` instead of marking them consolidated), `--graphify` (rebuild the graph after running), `--dry-run`.
+* **`./brain check`** — Run health checks (maintenance). Scans for broken wiki-links, orphan pages, and malformed YAML frontmatter. With `--report`, appends a health report to `Log.md`.
+* **`./brain duplicates`** — Scan for near-duplicate concepts in `01_Wiki` using rapidfuzz (similarity threshold configured via `--min N`).
+* **`./brain merge --winner <path> --loser <path>`** — Automatically merges a duplicate note into the winner (combining aliases, tags, content, and updating all backlinks in the vault).
+* **`./brain index`** — Force regenerate index files (`_index.md`) in all vault folders and recalculate stats.
+* **`./brain graphify`** — Quick shortcut to rebuild the codebase relations map via `graphify update`.
 
 ---
 
-## 📊 Использование Graphify в работе
+## 🔗 AI Agent Integrations (Harnesses)
 
-`graphify` автоматически сканирует вашу кодовую базу и заметки, строя семантический граф зависимостей и связей. Агент использует навык `graphify-query` для мгновенной навигации по коду:
-* `graphify query "<вопрос>"` — семантический поиск по коду через обход графа.
-* `graphify path "<SymbolA>" "<SymbolB>"` — поиск цепочки вызовов или зависимостей.
-* `graphify explain "<Symbol>"` — детальное описание структуры и связей компонента.
+The `connect.sh` script automatically detects and registers the skills in your active AI environments:
 
-Для визуализации графа откройте сгенерированный файл `graphify-out/graph.html` в браузере.
+1. **Claude Code**: Links skills to `.claude/skills/` and integrates graph rules in `CLAUDE.md`.
+2. **Google Antigravity**: Copies skills to `.agents/skills/`.
+3. **Codex CLI**: Links skills to `~/.codex/skills/`.
+4. **Hermes / OpenCode**: Imports skills to `~/.opencode/skills/memory-bundle/`.
+
+If no agent folder is detected, it defaults to creating `.claude/skills/` locally.
+
+---
+
+## 📊 Navigating the Codebase with Graphify
+
+`graphify` analyzes your code and notes to build a dependency graph. The agent uses the `graphify-query` skill to locate components:
+* `graphify query "<question>"` — BFS semantic query across the code graph.
+* `graphify path "<SymbolA>" "<SymbolB>"` — trace dependency path/call flows between two components.
+* `graphify explain "<Symbol>"` — fetch a detailed description of a symbol's structure and connections.
+
+To visualize the graph, open the generated `graphify-out/graph.html` in a web browser.
