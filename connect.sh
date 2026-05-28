@@ -216,16 +216,6 @@ link_all_skills() {
 }
 
 # Normalize instructions file casing to avoid duplicate files on case-sensitive Linux FS
-if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
-    if [ -f "$PROJECT_ROOT/Claude.md" ]; then
-        mv "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/CLAUDE.md"
-        echo "   Нормализовано имя файла: Claude.md -> CLAUDE.md"
-    elif [ -f "$PROJECT_ROOT/claude.md" ]; then
-        mv "$PROJECT_ROOT/claude.md" "$PROJECT_ROOT/CLAUDE.md"
-        echo "   Нормализовано имя файла: claude.md -> CLAUDE.md"
-    fi
-fi
-
 if [ ! -f "$PROJECT_ROOT/AGENTS.md" ]; then
     if [ -f "$PROJECT_ROOT/Agents.md" ]; then
         mv "$PROJECT_ROOT/Agents.md" "$PROJECT_ROOT/AGENTS.md"
@@ -237,11 +227,54 @@ if [ ! -f "$PROJECT_ROOT/AGENTS.md" ]; then
 fi
 
 # 4.1. Claude Code (.claude/skills/)
-if [ -d "$PROJECT_ROOT/.claude" ] || command -v claude &> /dev/null; then
+# Detect Claude Code if .claude folder exists, or any case variant of CLAUDE.md exists
+if [ -d "$PROJECT_ROOT/.claude" ] || [ -f "$PROJECT_ROOT/CLAUDE.md" ] || [ -f "$PROJECT_ROOT/Claude.md" ] || [ -f "$PROJECT_ROOT/claude.md" ]; then
     echo "👉 Обнаружена среда Claude Code. Подключение навыков..."
     link_all_skills "$PROJECT_ROOT/.claude/skills"
+    
     if command -v graphify &> /dev/null; then
-        graphify claude install || true
+        if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
+            # Run graphify claude install to register hooks in .claude/settings.json
+            graphify claude install || true
+            
+            # If CLAUDE.md was created with graphify section, move those rules to AGENTS.md
+            if [ -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+                if ! grep -q "## graphify" "$PROJECT_ROOT/AGENTS.md"; then
+                    echo "" >> "$PROJECT_ROOT/AGENTS.md"
+                    cat "$PROJECT_ROOT/CLAUDE.md" >> "$PROJECT_ROOT/AGENTS.md"
+                    echo "   Раздел graphify перенесен в AGENTS.md"
+                fi
+            fi
+            
+            # Setup CLAUDE.md as a clean redirect to AGENTS.md to avoid duplicate files/content
+            echo "@AGENTS.md" > "$PROJECT_ROOT/CLAUDE.md"
+            echo "   Файл CLAUDE.md настроен как перенаправление на AGENTS.md"
+            rm -f "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/claude.md"
+        else
+            # No AGENTS.md exists, so normalize case to CLAUDE.md if needed
+            if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+                if [ -f "$PROJECT_ROOT/Claude.md" ]; then
+                    mv "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                elif [ -f "$PROJECT_ROOT/claude.md" ]; then
+                    mv "$PROJECT_ROOT/claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                fi
+            fi
+            graphify claude install || true
+        fi
+    else
+        # Graphify is not present but Claude Code environment is detected
+        if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
+            echo "@AGENTS.md" > "$PROJECT_ROOT/CLAUDE.md"
+            rm -f "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/claude.md"
+        else
+            if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+                if [ -f "$PROJECT_ROOT/Claude.md" ]; then
+                    mv "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                elif [ -f "$PROJECT_ROOT/claude.md" ]; then
+                    mv "$PROJECT_ROOT/claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                fi
+            fi
+        fi
     fi
 fi
 
