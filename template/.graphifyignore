@@ -1,0 +1,23 @@
+# Files/dirs graphify should NOT scan when building the knowledge graph.
+# Same syntax as .gitignore.
+
+# Archives & historical notes
+04_Archive/
+**/04_Archive/
+
+# Python venvs
+**/.venv/
+**/__pycache__/
+
+# Node modules
+**/node_modules/
+
+# Vault internal files
+.obsidian/
+**/05_Scripts/
+**/06_Skills/
+.git/
+.claude/
+.antigravity/
+.github/
+graphify-out/

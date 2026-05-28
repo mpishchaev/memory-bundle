@@ -139,6 +139,7 @@ fi
 # 3. Setup Graphify
 echo "📊 Настройка Graphify..."
 if ! command -v graphify &> /dev/null; then
+    # Note: The PyPI package is registered as 'graphifyy' (with two 'y's) while the CLI command is 'graphify' (one 'y').
     echo "   Инструмент 'graphify' не найден. Попытка установки через uv..."
     if command -v uv &> /dev/null; then
         uv tool install graphifyy
@@ -153,9 +154,17 @@ if command -v graphify &> /dev/null; then
     
     # Setup .graphifyignore
     if [ ! -f "$PROJECT_ROOT/.graphifyignore" ]; then
-        cp "$BUNDLE_DIR/template/.graphifyignore" "$PROJECT_ROOT/"
-        echo "   Создан файл .graphifyignore в корне проекта."
+        if [ -f "$BUNDLE_DIR/template/.graphifyignore" ]; then
+            cp "$BUNDLE_DIR/template/.graphifyignore" "$PROJECT_ROOT/"
+            echo "   Создан файл .graphifyignore в корне проекта."
+        else
+            printf "graphify-out/\n.graphifyignore\n" > "$PROJECT_ROOT/.graphifyignore"
+            echo "   Создан файл .graphifyignore по умолчанию."
+        fi
     fi
+    
+    # Run graphify install to sync skill versions and hooks globally
+    graphify install 2>/dev/null || true
     
     # Run graphify update to build initial graph
     echo "   Генерация начального графа знаний проекта..."
@@ -205,6 +214,27 @@ link_all_skills() {
         fi
     done
 }
+
+# Normalize instructions file casing to avoid duplicate files on case-sensitive Linux FS
+if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+    if [ -f "$PROJECT_ROOT/Claude.md" ]; then
+        mv "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/CLAUDE.md"
+        echo "   Нормализовано имя файла: Claude.md -> CLAUDE.md"
+    elif [ -f "$PROJECT_ROOT/claude.md" ]; then
+        mv "$PROJECT_ROOT/claude.md" "$PROJECT_ROOT/CLAUDE.md"
+        echo "   Нормализовано имя файла: claude.md -> CLAUDE.md"
+    fi
+fi
+
+if [ ! -f "$PROJECT_ROOT/AGENTS.md" ]; then
+    if [ -f "$PROJECT_ROOT/Agents.md" ]; then
+        mv "$PROJECT_ROOT/Agents.md" "$PROJECT_ROOT/AGENTS.md"
+        echo "   Нормализовано имя файла: Agents.md -> AGENTS.md"
+    elif [ -f "$PROJECT_ROOT/agents.md" ]; then
+        mv "$PROJECT_ROOT/agents.md" "$PROJECT_ROOT/AGENTS.md"
+        echo "   Нормализовано имя файла: agents.md -> AGENTS.md"
+    fi
+fi
 
 # 4.1. Claude Code (.claude/skills/)
 if [ -d "$PROJECT_ROOT/.claude" ] || command -v claude &> /dev/null; then
