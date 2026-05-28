@@ -260,7 +260,7 @@ fi
 if [ -d "$HOME/.codex" ]; then
     echo "👉 Обнаружена среда Codex. Подключение навыков..."
     link_all_skills "$HOME/.codex/skills"
-    if command -v graphify &> /dev/null; then
+    if command -v graphify &> /dev/null && [ -d "$PROJECT_ROOT/.codex" ]; then
         graphify codex install || true
     fi
 fi
@@ -275,7 +275,7 @@ if [ -d "$HOME/.opencode" ]; then
             link_skill "$skill_path" "$HOME/.opencode/skills/memory-bundle"
         fi
     done
-    if command -v graphify &> /dev/null; then
+    if command -v graphify &> /dev/null && [ -d "$PROJECT_ROOT/.opencode" ]; then
         graphify opencode install || true
     fi
 fi
