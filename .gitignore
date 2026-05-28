@@ -1,28 +1,22 @@
-# Local agent memory vault (test runs)
-.brain/
-brain
-AGENTS.md
-CLAUDE.md
-.claude/
-.codex/
+# Root level ignores (only apply to root directory of memory-bundle project itself)
+/.brain/
+/brain
+/AGENTS.md
+/CLAUDE.md
+/.claude/
+/.codex/
+/graphify-out/
+/.graphifyignore
+/obsidian-skills/
 
-# Graphify output
-graphify-out/
-.graphifyignore
-
-# Local clone of obsidian-skills (used for bundling)
-obsidian-skills/
-
-# Python virtualenvs and caches
-venv/
-.venv/
-__pycache__/
-*.pyc
-
-# Environment variables
-.env
-.env.local
-
-# OS files
-.DS_Store
-Thumbs.db
+# Global ignores (apply everywhere in the project tree)
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/.env
+**/.env.local
+**/.env.production
+**/.env.development
+**/.env.staging
+**/.DS_Store
+**/Thumbs.db

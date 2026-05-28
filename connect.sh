@@ -139,6 +139,7 @@ fi
 # 3. Setup Graphify
 echo "📊 Настройка Graphify..."
 if ! command -v graphify &> /dev/null; then
+    # Note: The PyPI package is registered as 'graphifyy' (with two 'y's) while the CLI command is 'graphify' (one 'y').
     echo "   Инструмент 'graphify' не найден. Попытка установки через uv..."
     if command -v uv &> /dev/null; then
         uv tool install graphifyy
@@ -153,9 +154,17 @@ if command -v graphify &> /dev/null; then
     
     # Setup .graphifyignore
     if [ ! -f "$PROJECT_ROOT/.graphifyignore" ]; then
-        cp "$BUNDLE_DIR/template/.graphifyignore" "$PROJECT_ROOT/"
-        echo "   Создан файл .graphifyignore в корне проекта."
+        if [ -f "$BUNDLE_DIR/template/.graphifyignore" ]; then
+            cp "$BUNDLE_DIR/template/.graphifyignore" "$PROJECT_ROOT/"
+            echo "   Создан файл .graphifyignore в корне проекта."
+        else
+            printf "graphify-out/\n.graphifyignore\n" > "$PROJECT_ROOT/.graphifyignore"
+            echo "   Создан файл .graphifyignore по умолчанию."
+        fi
     fi
+    
+    # Run graphify install to sync skill versions and hooks globally
+    graphify install 2>/dev/null || true
     
     # Run graphify update to build initial graph
     echo "   Генерация начального графа знаний проекта..."
@@ -206,12 +215,66 @@ link_all_skills() {
     done
 }
 
+# Normalize instructions file casing to avoid duplicate files on case-sensitive Linux FS
+if [ ! -f "$PROJECT_ROOT/AGENTS.md" ]; then
+    if [ -f "$PROJECT_ROOT/Agents.md" ]; then
+        mv "$PROJECT_ROOT/Agents.md" "$PROJECT_ROOT/AGENTS.md"
+        echo "   Нормализовано имя файла: Agents.md -> AGENTS.md"
+    elif [ -f "$PROJECT_ROOT/agents.md" ]; then
+        mv "$PROJECT_ROOT/agents.md" "$PROJECT_ROOT/AGENTS.md"
+        echo "   Нормализовано имя файла: agents.md -> AGENTS.md"
+    fi
+fi
+
 # 4.1. Claude Code (.claude/skills/)
-if [ -d "$PROJECT_ROOT/.claude" ] || command -v claude &> /dev/null; then
+# Detect Claude Code if .claude folder exists, or any case variant of CLAUDE.md exists
+if [ -d "$PROJECT_ROOT/.claude" ] || [ -f "$PROJECT_ROOT/CLAUDE.md" ] || [ -f "$PROJECT_ROOT/Claude.md" ] || [ -f "$PROJECT_ROOT/claude.md" ]; then
     echo "👉 Обнаружена среда Claude Code. Подключение навыков..."
     link_all_skills "$PROJECT_ROOT/.claude/skills"
+    
     if command -v graphify &> /dev/null; then
-        graphify claude install || true
+        if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
+            # Run graphify claude install to register hooks in .claude/settings.json
+            graphify claude install || true
+            
+            # If CLAUDE.md was created with graphify section, move those rules to AGENTS.md
+            if [ -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+                if ! grep -q "## graphify" "$PROJECT_ROOT/AGENTS.md"; then
+                    echo "" >> "$PROJECT_ROOT/AGENTS.md"
+                    cat "$PROJECT_ROOT/CLAUDE.md" >> "$PROJECT_ROOT/AGENTS.md"
+                    echo "   Раздел graphify перенесен в AGENTS.md"
+                fi
+            fi
+            
+            # Setup CLAUDE.md as a clean redirect to AGENTS.md to avoid duplicate files/content
+            echo "@AGENTS.md" > "$PROJECT_ROOT/CLAUDE.md"
+            echo "   Файл CLAUDE.md настроен как перенаправление на AGENTS.md"
+            rm -f "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/claude.md"
+        else
+            # No AGENTS.md exists, so normalize case to CLAUDE.md if needed
+            if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+                if [ -f "$PROJECT_ROOT/Claude.md" ]; then
+                    mv "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                elif [ -f "$PROJECT_ROOT/claude.md" ]; then
+                    mv "$PROJECT_ROOT/claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                fi
+            fi
+            graphify claude install || true
+        fi
+    else
+        # Graphify is not present but Claude Code environment is detected
+        if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
+            echo "@AGENTS.md" > "$PROJECT_ROOT/CLAUDE.md"
+            rm -f "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/claude.md"
+        else
+            if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+                if [ -f "$PROJECT_ROOT/Claude.md" ]; then
+                    mv "$PROJECT_ROOT/Claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                elif [ -f "$PROJECT_ROOT/claude.md" ]; then
+                    mv "$PROJECT_ROOT/claude.md" "$PROJECT_ROOT/CLAUDE.md"
+                fi
+            fi
+        fi
     fi
 fi
 
@@ -230,7 +293,7 @@ fi
 if [ -d "$HOME/.codex" ]; then
     echo "👉 Обнаружена среда Codex. Подключение навыков..."
     link_all_skills "$HOME/.codex/skills"
-    if command -v graphify &> /dev/null; then
+    if command -v graphify &> /dev/null && [ -d "$PROJECT_ROOT/.codex" ]; then
         graphify codex install || true
     fi
 fi
@@ -245,7 +308,7 @@ if [ -d "$HOME/.opencode" ]; then
             link_skill "$skill_path" "$HOME/.opencode/skills/memory-bundle"
         fi
     done
-    if command -v graphify &> /dev/null; then
+    if command -v graphify &> /dev/null && [ -d "$PROJECT_ROOT/.opencode" ]; then
         graphify opencode install || true
     fi
 fi
