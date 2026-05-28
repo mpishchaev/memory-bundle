@@ -24,7 +24,7 @@
    /home/ffazy/Projects/memory-bundle/connect.sh
    ```
 
-3. (Опционально) Настройте файл `.brain/05_Scripts/sleep_cycle/.env`, указав API-ключ для LLM (нужен для работы Sleep Cycle — разбора сырых заметок).
+3. (Опционально) Настройте файл `.brain/05_Scripts/sleep_cycle/.env`, указав API-ключ для LLM (нужен для работы Sleep Cycle — разбора сырых заметок). Вы также можете указать `GEMINI_API_KEY` (или `GOOGLE_API_KEY`) для включения семантического ИИ-обогащения графа знаний вашего проекта в Graphify.
 
 ---
 

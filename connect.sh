@@ -114,6 +114,10 @@ LLM_API_KEY=sk-your-key-here
 LLM_MODEL=gpt-4o
 LLM_FALLBACK_MODEL=gpt-4o-mini
 BRAIN_ROOT=$VAULT_DIR
+
+# Ключ API Google Gemini для семантического обогащения графа знаний в Graphify
+GEMINI_API_KEY=AIzaSy...
+GOOGLE_API_KEY=AIzaSy...
 EOF
         fi
     fi
