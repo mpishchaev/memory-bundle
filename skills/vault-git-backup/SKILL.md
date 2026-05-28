@@ -1,29 +1,29 @@
 ---
 name: vault-git-backup
-description: "Создает коммит с изменениями в хранилище памяти и отправляет их в удаленный Git-репозиторий для резервного копирования"
+description: "Creates a commit with changes in the memory vault and pushes them to a remote Git repository for backup"
 ---
 
-# vault-git-backup (Резервное Копирование в Git)
+# vault-git-backup (Git Backup / Version Control)
 
-## 💾 Назначение
+## 💾 Purpose
 
-Этот навык обеспечивает **версионирование и резервное копирование** локальной памяти с использованием Git. Агент проверяет статус репозитория, формирует сообщение коммита с временной меткой и синхронизирует данные с удаленным сервером.
+This skill provides **version control and backups** for the local memory vault using Git. The agent checks the repository status, creates a commit message with a timestamp, and syncs the changes with the remote server.
 
-## 🚦 Когда использовать
+## 🚦 When to Use
 
-- В конце сессии после завершения цикла консолидации (Sleep Cycle).
-- Перед выполнением крупных изменений или слияний дубликатов заметок.
-- По запросу пользователя для фиксации важной контрольной точки (Checkpoint).
+- At the end of a session, after running the Sleep Cycle.
+- Before executing large refactorings or merging duplicate notes.
+- When requested by the user to establish a checkpoint.
 
-## 📋 Инструкции по выполнению
+## 📋 Instructions for Execution
 
-Выполните коммит и отправку изменений в Git:
+Commit and push changes to Git:
 
 ```bash
-# Вызов через CLI-утилиту brain (рекомендуется):
+# Invoke via the brain CLI utility (recommended):
 ./brain backup
 
-# Или напрямую через git:
+# Or directly via Git commands:
 git -C .brain add .
 git -C .brain commit -m "chore(backup): snapshot $(date +'%Y-%m-%d %H:%M')"
 git -C .brain push origin main

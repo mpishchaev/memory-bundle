@@ -1,43 +1,43 @@
 ---
 name: vault-sleep-cycle
-description: "Анализирует входящие сырые данные в 00_Raw, извлекает сущности и концепты, и асинхронно консолидирует их в долгосрочную семантическую базу знаний (01_Wiki)"
+description: "Analyzes incoming raw data in 00_Raw, extracts entities and concepts, and consolidates them into the long-term semantic knowledge base (01_Wiki)"
 ---
 
-# vault-sleep-cycle (Цикл Сна / Консолидация Памяти)
+# vault-sleep-cycle (Memory Consolidation / Sleep Cycle)
 
-## 🎯 Назначение
+## 🎯 Purpose
 
-Этот навык реализует **когнитивный процесс перехода кратковременной памяти в долговременную** (Raw-to-Wiki Pipeline). Он сканирует директорию `00_Raw/` хранилища памяти, извлекает ценные факты, идеи и контексты из неструктурированных заметок, после чего создает или дополняет атомарные страницы в слое `01_Wiki/` с правильной простановкой двунаправленных ссылок и YAML-метаданных.
+This skill implements the **cognitive process of transitioning short-term memory into long-term memory** (Raw-to-Wiki Pipeline). It scans the `00_Raw/` directory of the memory vault, extracts valuable facts, ideas, and contexts from unstructured notes, and then creates or appends atomic pages in the `01_Wiki/` layer, ensuring proper bidirectional links and YAML metadata.
 
-## 🚦 Когда использовать
+## 🚦 When to Use
 
-- Перед завершением рабочего дня или сессии для обработки накопившегося инбокса.
-- Когда в `00_Raw/` скопилось много дампов чатов, логов или быстрых заметок.
-- Для обогащения существующего графа знаний новыми связями из свежих материалов.
+- Before ending a workday or session to process the accumulated inbox.
+- When `00_Raw/` accumulates a large number of chat dumps, logs, or quick notes.
+- To enrich the existing knowledge graph with new relationships from recent materials.
 
-## 📋 Инструкции по выполнению
+## 📋 Instructions for Execution
 
-Выполните консолидацию памяти с помощью вызова скрипта или CLI в корне проекта:
+Run the memory consolidation cycle using the script or CLI in the project root:
 
 ```bash
-# Вызов через CLI-утилиту brain (рекомендуется):
+# Invoke via the brain CLI utility (recommended):
 ./brain sleep
 
-# Или напрямую через python (убедитесь, что виртуальное окружение активировано):
+# Or directly via Python (ensure virtualenv is activated):
 python3 .brain/05_Scripts/sleep_cycle/run.py
 ```
 
-### Параметры запуска:
-- `--limit N` — ограничить количество обрабатываемых заметок из `00_Raw` за один прогон (по умолчанию 5).
-- `--dry-run` — выполнить тестовый прогон без записи изменений на диск.
-- `--archive` — переместить обработанные заметки из `00_Raw/` в `04_Archive/` вместо простой пометки `status: consolidated`.
-- `--graphify` — обновить граф связей `graphify` после успешной консолидации.
+### Execution parameters:
+- `--limit N` — limit the number of processed notes from `00_Raw` per run (default: 5).
+- `--dry-run` — run a simulation without writing changes to disk.
+- `--archive` — move processed notes from `00_Raw/` to `04_Archive/` instead of just marking them `status: consolidated`.
+- `--graphify` — update the `graphify` codebase relation graph after successful consolidation.
 
-Пример:
+Example:
 ```bash
 ./brain sleep --limit 10 --archive --graphify
 ```
 
-## ⚠️ Правила безопасности
-- **Никаких галлюцинаций путей:** Ссылки формируются строго как `[[Название_Концепта]]` без указания относительного пути в `01_Wiki/`.
-- **Сохранение ручных правок:** Никогда не перезаписывайте вики-страницы целиком с удалением существующего текста, скрипт слияния автоматически дописывает новую информацию в существующие файлы.
+## ⚠️ Safety Rules
+- **No path hallucinations:** Links must be formed strictly as `[[Concept_Name]]` without any relative or absolute file paths under `01_Wiki/`.
+- **Preserve manual edits:** Never overwrite wiki pages entirely. The merge script automatically appends new information to existing files while preserving their content.
