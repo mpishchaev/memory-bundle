@@ -1,0 +1,20 @@
+{
+  "userIgnoreFilters": [
+    "graphify-out/",
+    ".agents/",
+    ".claude/",
+    ".brain/05_Scripts/sleep_cycle/.venv/",
+    ".brain/05_Scripts/sleep_cycle/__pycache__/",
+    ".brain/05_Scripts/maintenance/__pycache__/",
+    ".brain/06_Skills/browser-harness/",
+    ".brain/06_Skills/excalidraw-diagram/",
+    "brain/05_Scripts/sleep_cycle/.venv/",
+    "brain/05_Scripts/sleep_cycle/__pycache__/",
+    "brain/05_Scripts/maintenance/__pycache__/",
+    "brain/06_Skills/browser-harness/",
+    "brain/06_Skills/excalidraw-diagram/",
+    "node_modules/",
+    ".venv/",
+    "__pycache__/"
+  ]
+}
