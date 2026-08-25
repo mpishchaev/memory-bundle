@@ -21,7 +21,7 @@ To connect agent memory to a new or existing project:
 
 2. Run the connection script from this bundle:
    ```bash
-   /home/ffazy/Projects/memory-bundle/connect.sh
+   /path/to/memory-bundle/connect.sh
    ```
 
 3. (Optional) Configure the `.brain/05_Scripts/sleep_cycle/.env` file with your LLM API credentials (required for the Sleep Cycle note parser). You can also define `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) to enable Google Gemini-based semantic enrichment for the Graphify codebase knowledge graph.

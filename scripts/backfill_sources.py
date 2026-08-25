@@ -12,11 +12,15 @@ No LLM calls. Idempotent — safe to re-run.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 # Allow `python backfill_sources.py` from any cwd.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Корень хранилища: BRAIN_ROOT, иначе родитель каталога скриптов (05_Scripts/..).
+DEFAULT_ROOT = Path(os.environ.get("BRAIN_ROOT", Path(__file__).resolve().parent.parent))
 
 import frontmatter
 
@@ -27,7 +31,7 @@ from sleep_cycle.writer import add_source_backlink, create_source
 
 def main() -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--root", type=Path, default=Path("/home/ffazy/Projects/00__Brain"))
+    p.add_argument("--root", type=Path, default=DEFAULT_ROOT)
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args()
 

@@ -105,7 +105,9 @@ else
     if [ ! -f "$VAULT_DIR/05_Scripts/sleep_cycle/.env" ]; then
         echo "   Создание файла конфигурации .env..."
         if [ -f "$VAULT_DIR/05_Scripts/sleep_cycle/.env.example" ]; then
-            cp "$VAULT_DIR/05_Scripts/sleep_cycle/.env.example" "$VAULT_DIR/05_Scripts/sleep_cycle/.env"
+            sed "s|^BRAIN_ROOT=.*|BRAIN_ROOT=$VAULT_DIR|" \
+                "$VAULT_DIR/05_Scripts/sleep_cycle/.env.example" \
+                > "$VAULT_DIR/05_Scripts/sleep_cycle/.env"
         else
             cat <<EOF > "$VAULT_DIR/05_Scripts/sleep_cycle/.env"
 # Конфигурация OpenAI-совместимого API для Sleep Cycle

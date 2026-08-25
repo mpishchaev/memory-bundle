@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Регенерация авто-секций _index.md по всему хранилищу 00__Brain.
+"""Регенерация авто-секций _index.md по всему хранилищу.
 
 Каждый каталог памяти содержит _index.md со статическим описанием и
 авто-секцией между маркерами INDEX:AUTO. Этот скрипт пересчитывает
@@ -8,7 +8,10 @@
 
 Чистый stdlib — запускается любым Python 3, без зависимостей.
 
-    python update_indexes.py --root /home/ffazy/Projects/00__Brain
+Корень хранилища берётся из --root, иначе из BRAIN_ROOT, иначе
+вычисляется как родительская папка каталога скриптов (05_Scripts/..).
+
+    python update_indexes.py --root /путь/к/хранилищу
     python update_indexes.py --dry-run
 
 Вызывается также из sleep_cycle/run.py и maintenance/check.py через

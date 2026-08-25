@@ -3,8 +3,15 @@ set -e
 
 # Скрипт интеграции централизованных навыков Единого Мозга (Single Source of Truth)
 # Использование: ./link_skills.sh /путь/к/папке/навыков/агента
+#
+# Источник навыков определяется так:
+#   1. переменная окружения BRAIN_SKILLS_DIR (если задана);
+#   2. $BRAIN_ROOT/06_Skills (если задан BRAIN_ROOT);
+#   3. 06_Skills рядом с каталогом скриптов (<хранилище>/05_Scripts/.. /06_Skills).
 
-BRAIN_SKILLS_DIR="/home/ffazy/Projects/00__Brain/06_Skills"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VAULT_ROOT="${BRAIN_ROOT:-$(dirname "$SCRIPT_DIR")}"
+BRAIN_SKILLS_DIR="${BRAIN_SKILLS_DIR:-$VAULT_ROOT/06_Skills}"
 
 if [ -z "$1" ]; then
     echo "❌ Ошибка: Не указан путь к целевой директории навыков агента/harness."
@@ -30,6 +37,7 @@ for SKILL in "${SKILLS[@]}"; do
 
     if [ ! -d "$SOURCE_SKILL_PATH" ]; then
         echo "❌ Ошибка: Исходный навык '$SOURCE_SKILL_PATH' не найден в ядре мозга!"
+        echo "👉 Укажите корень хранилища через BRAIN_ROOT или BRAIN_SKILLS_DIR."
         exit 1
     fi
 

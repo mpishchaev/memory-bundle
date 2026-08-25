@@ -24,7 +24,8 @@ cd 05_Scripts/sleep_cycle && .venv/bin/python run.py --limit 10
 .venv/bin/python ../maintenance/check.py --report
 
 # Только обновить индексы
-python 05_Scripts/update_indexes.py --root /home/ffazy/Projects/00__Brain
+python 05_Scripts/update_indexes.py            # корень берётся из BRAIN_ROOT или ../
+python 05_Scripts/update_indexes.py --root /путь/к/хранилищу
 ```
 
 - `update_indexes.py` вызывается автоматически из `sleep_cycle/run.py` и `maintenance/check.py`.
